@@ -13,7 +13,7 @@ export default function Home() {
               Waktu Solat Malaysia
             </h1>
             <p className="text-blue-100 text-lg">
-              Jadual Waktu Solat, Berbuka & Imsak yang Seluruh Malaysia
+              Jadual Waktu Solat, Berbuka & Imsak Seluruh Malaysia
             </p>
           </div>
           <TabsComponent />
