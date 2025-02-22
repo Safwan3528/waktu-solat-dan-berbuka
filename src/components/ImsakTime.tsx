@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { getPrayerTimes, zones } from '@/services/prayerTimes'
+import { getPrayerTimes } from '@/services/prayerTimes'
 import { ZoneData } from '@/types'
 import LoadingSpinner from './LoadingSpinner'
 import ZoneSelector from './ZoneSelector'

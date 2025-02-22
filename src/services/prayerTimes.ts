@@ -74,19 +74,17 @@ export async function getPrayerTimes(zone: string, year: number, month: number):
     }
   } catch (error) {
     console.error('Error fetching prayer times:', error)
-    if (error instanceof Error) {
-      if (error.name === 'AbortError' || (error as AxiosError).code === 'ECONNABORTED') {
-        throw new Error('Sambungan terputus. Sila cuba lagi.')
-      } else if ((error as AxiosError).response) {
-        const response = (error as AxiosError).response
-        switch (response?.status) {
-          case 404:
-            throw new Error('Zon tidak dijumpai')
-          case 429:
-            throw new Error('Terlalu banyak permintaan. Sila cuba sebentar lagi.')
-          default:
-            throw new Error(`Ralat ${response?.status}: Sila cuba lagi.`)
-        }
+    const err = error as AxiosError
+    if (err.code === 'ECONNABORTED') {
+      throw new Error('Sambungan terputus. Sila cuba lagi.')
+    } else if (err.response) {
+      switch (err.response.status) {
+        case 404:
+          throw new Error('Zon tidak dijumpai')
+        case 429:
+          throw new Error('Terlalu banyak permintaan. Sila cuba sebentar lagi.')
+        default:
+          throw new Error(`Ralat ${err.response.status}: Sila cuba lagi.`)
       }
     }
     throw new Error('Ralat tidak dijangka. Sila cuba lagi.')

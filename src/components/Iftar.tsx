@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { getPrayerTimes, zones } from '@/services/prayerTimes'
+import { getPrayerTimes } from '@/services/prayerTimes'
 import { ZoneData } from '@/types'
 import LoadingSpinner from './LoadingSpinner'
 import Countdown from './Countdown'
@@ -13,6 +13,14 @@ interface ShareData {
   maghrib: string
 }
 
+interface NotificationError extends Error {
+  code?: string;
+  response?: {
+    status: number;
+    message?: string;
+  };
+}
+
 export default function Iftar() {
   const [selectedState, setSelectedState] = useState('Selangor')
   const [selectedZone, setSelectedZone] = useState('SGR01')
@@ -22,6 +30,8 @@ export default function Iftar() {
   const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default')
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentDate, setCurrentDate] = useState(new Date())
+
+  const monthChanged = currentDate.getMonth()
 
   const fetchData = useCallback(async () => {
     setLoading(true)
@@ -35,7 +45,8 @@ export default function Iftar() {
       setPrayerData(data)
     } catch (error) {
       console.error('Error:', error)
-      setError(error instanceof Error ? error.message : 'Terjadi kesalahan')
+      const err = error as NotificationError
+      setError(err.message || 'Terjadi kesalahan')
     }
     setLoading(false)
   }, [selectedZone, currentDate])
@@ -50,7 +61,7 @@ export default function Iftar() {
 
   useEffect(() => {
     fetchData()
-  }, [fetchData])
+  }, [fetchData, monthChanged])
 
   useEffect(() => {
     // Check if browser supports notifications
