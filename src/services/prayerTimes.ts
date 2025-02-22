@@ -20,6 +20,19 @@ export const zones = {
   'Wilayah Persekutuan': ['WLY01', 'WLY02']
 }
 
+// Tambah type untuk response data
+interface PrayerTimeData {
+  date: string;
+  day: string;
+  imsak: string;
+  fajr: string;
+  syuruk: string;
+  dhuhr: string;
+  asr: string;
+  maghrib: string;
+  isha: string;
+}
+
 // Fungsi untuk menukar format zon JAKIM ke format API
 function convertZoneFormat(zone: string): string {
   return zone // Gunakan kod zon asal untuk API JAKIM
@@ -57,7 +70,7 @@ export async function getPrayerTimes(zone: string, year: number, month: number):
       return {
         zone: zone,
         state: getStateFromZone(zone),
-        times: response.data.prayerTime.map((item: PrayerTimeResponse) => ({
+        times: response.data.prayerTime.map((item: PrayerTimeData) => ({
           date: item.date,
           day: item.day,
           imsak: item.imsak,
