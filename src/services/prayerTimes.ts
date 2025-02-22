@@ -1,5 +1,5 @@
-import axios from 'axios'
-import { ZoneData, APIResponse } from '@/types'
+import axios, { AxiosError } from 'axios'
+import { ZoneData, APIResponse, PrayerTimeResponse } from '@/types'
 
 const BASE_URL = 'https://www.e-solat.gov.my/index.php?r=esolatApi/takwimsolat'
 
@@ -72,23 +72,23 @@ export async function getPrayerTimes(zone: string, year: number, month: number):
     } else {
       throw new Error('Data tidak tersedia')
     }
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error fetching prayer times:', error)
-    if (error.code === 'ECONNABORTED') {
-      throw new Error('Sambungan terputus. Sila cuba lagi.')
-    } else if (error.response) {
-      switch (error.response.status) {
-        case 404:
-          throw new Error('Zon tidak dijumpai')
-        case 429:
-          throw new Error('Terlalu banyak permintaan. Sila cuba sebentar lagi.')
-        default:
-          throw new Error(`Ralat ${error.response.status}: Sila cuba lagi.`)
+    if (error instanceof Error) {
+      if (error.name === 'AbortError' || (error as AxiosError).code === 'ECONNABORTED') {
+        throw new Error('Sambungan terputus. Sila cuba lagi.')
+      } else if ((error as AxiosError).response) {
+        const response = (error as AxiosError).response
+        switch (response?.status) {
+          case 404:
+            throw new Error('Zon tidak dijumpai')
+          case 429:
+            throw new Error('Terlalu banyak permintaan. Sila cuba sebentar lagi.')
+          default:
+            throw new Error(`Ralat ${response?.status}: Sila cuba lagi.`)
+        }
       }
-    } else if (error.request) {
-      throw new Error('Tidak dapat menghubungi pelayan. Sila periksa sambungan internet anda.')
-    } else {
-      throw new Error('Ralat tidak dijangka. Sila cuba lagi.')
     }
+    throw new Error('Ralat tidak dijangka. Sila cuba lagi.')
   }
 } 

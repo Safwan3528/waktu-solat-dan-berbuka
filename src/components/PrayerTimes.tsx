@@ -45,12 +45,6 @@ export default function PrayerTimes() {
     fetchData()
   }, [selectedZone, currentDate.getMonth(), fetchData])
 
-  const isToday = (dateString: string) => {
-    const date = new Date(dateString)
-    const today = new Date()
-    return date.toDateString() === today.toDateString()
-  }
-
   return (
     <div className="space-y-6">
       <ZoneSelector

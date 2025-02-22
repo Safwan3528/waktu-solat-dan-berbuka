@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { getPrayerTimes, zones } from '@/services/prayerTimes'
 import { ZoneData } from '@/types'
 import LoadingSpinner from './LoadingSpinner'
@@ -14,7 +14,7 @@ export default function ImsakTime() {
   const [error, setError] = useState<string | null>(null)
   const [currentDate, setCurrentDate] = useState(new Date())
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
@@ -29,7 +29,7 @@ export default function ImsakTime() {
       setError(error instanceof Error ? error.message : 'Terjadi kesalahan')
     }
     setLoading(false)
-  }
+  }, [selectedZone, currentDate])
 
   // Update current date every minute
   useEffect(() => {
@@ -43,7 +43,7 @@ export default function ImsakTime() {
   // Fetch new data when month changes or zone changes
   useEffect(() => {
     fetchData()
-  }, [selectedZone, currentDate.getMonth()])
+  }, [fetchData])
 
   return (
     <div className="space-y-6">

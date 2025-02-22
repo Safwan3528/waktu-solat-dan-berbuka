@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { getPrayerTimes, zones } from '@/services/prayerTimes'
 import { ZoneData } from '@/types'
 import LoadingSpinner from './LoadingSpinner'
@@ -8,6 +8,10 @@ import Countdown from './Countdown'
 import { FaFacebook, FaTwitter, FaWhatsapp } from 'react-icons/fa'
 import AudioPlayer from './AudioPlayer'
 import ZoneSelector from './ZoneSelector'
+
+interface ShareData {
+  maghrib: string
+}
 
 export default function Iftar() {
   const [selectedState, setSelectedState] = useState('Selangor')
@@ -19,7 +23,7 @@ export default function Iftar() {
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentDate, setCurrentDate] = useState(new Date())
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
@@ -34,7 +38,7 @@ export default function Iftar() {
       setError(error instanceof Error ? error.message : 'Terjadi kesalahan')
     }
     setLoading(false)
-  }
+  }, [selectedZone, currentDate])
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -46,7 +50,7 @@ export default function Iftar() {
 
   useEffect(() => {
     fetchData()
-  }, [selectedZone, currentDate.getMonth()])
+  }, [fetchData])
 
   useEffect(() => {
     // Check if browser supports notifications
@@ -71,7 +75,7 @@ export default function Iftar() {
     }
   }
 
-  const shareToSocial = (platform: 'facebook' | 'twitter' | 'whatsapp', time: any) => {
+  const shareToSocial = (platform: 'facebook' | 'twitter' | 'whatsapp', time: ShareData) => {
     const text = `Waktu berbuka puasa hari ini di ${prayerData?.state} (${prayerData?.zone}) ialah pada ${time.maghrib}`
     const url = window.location.href
 
@@ -195,19 +199,19 @@ export default function Iftar() {
                   
                   <div className="flex gap-2">
                     <button
-                      onClick={() => shareToSocial('facebook', time)}
+                      onClick={() => shareToSocial('facebook', { maghrib: time.maghrib })}
                       className="p-2 text-blue-600 hover:bg-blue-50 rounded-full"
                     >
                       <FaFacebook size={20} />
                     </button>
                     <button
-                      onClick={() => shareToSocial('twitter', time)}
+                      onClick={() => shareToSocial('twitter', { maghrib: time.maghrib })}
                       className="p-2 text-blue-400 hover:bg-blue-50 rounded-full"
                     >
                       <FaTwitter size={20} />
                     </button>
                     <button
-                      onClick={() => shareToSocial('whatsapp', time)}
+                      onClick={() => shareToSocial('whatsapp', { maghrib: time.maghrib })}
                       className="p-2 text-green-600 hover:bg-green-50 rounded-full"
                     >
                       <FaWhatsapp size={20} />
