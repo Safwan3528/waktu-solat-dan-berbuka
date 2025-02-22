@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { ZoneData } from '@/types'
+import { ZoneData, APIResponse } from '@/types'
 
 const BASE_URL = 'https://www.e-solat.gov.my/index.php?r=esolatApi/takwimsolat'
 
@@ -39,7 +39,7 @@ export async function getPrayerTimes(zone: string, year: number, month: number):
     const formattedZone = convertZoneFormat(zone)
     const formattedMonth = month.toString().padStart(2, '0')
     
-    const response = await axios.get(BASE_URL, {
+    const response = await axios.get<APIResponse>(BASE_URL, {
       params: {
         zone: formattedZone,
         year: year,
@@ -57,7 +57,7 @@ export async function getPrayerTimes(zone: string, year: number, month: number):
       return {
         zone: zone,
         state: getStateFromZone(zone),
-        times: response.data.prayerTime.map((item: any) => ({
+        times: response.data.prayerTime.map((item: PrayerTimeResponse) => ({
           date: item.date,
           day: item.day,
           imsak: item.imsak,

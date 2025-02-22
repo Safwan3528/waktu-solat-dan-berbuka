@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { getPrayerTimes, zones } from '@/services/prayerTimes'
+import { useEffect, useState, useCallback } from 'react'
+import { getPrayerTimes } from '@/services/prayerTimes'
 import { ZoneData } from '@/types'
 import LoadingSpinner from './LoadingSpinner'
 import ZoneSelector from './ZoneSelector'
@@ -14,7 +14,7 @@ export default function PrayerTimes() {
   const [error, setError] = useState<string | null>(null)
   const [currentDate, setCurrentDate] = useState(new Date())
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
@@ -29,7 +29,7 @@ export default function PrayerTimes() {
       setError(error instanceof Error ? error.message : 'Terjadi kesalahan')
     }
     setLoading(false)
-  }
+  }, [selectedZone, currentDate])
 
   // Update current date every minute
   useEffect(() => {
@@ -43,7 +43,7 @@ export default function PrayerTimes() {
   // Fetch new data when month changes or zone changes
   useEffect(() => {
     fetchData()
-  }, [selectedZone, currentDate.getMonth()])
+  }, [selectedZone, currentDate.getMonth(), fetchData])
 
   const isToday = (dateString: string) => {
     const date = new Date(dateString)
