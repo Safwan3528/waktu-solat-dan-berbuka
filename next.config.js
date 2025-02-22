@@ -8,6 +8,13 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  webpack: (config, { isServer }) => {
+    // Disable type checking and linting during build
+    if (!isServer) {
+      config.devtool = false;
+    }
+    return config;
+  },
 }
 
 module.exports = nextConfig 
