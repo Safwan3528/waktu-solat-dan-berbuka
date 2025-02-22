@@ -1,7 +1,7 @@
 'use client'
 
-import TabsComponent from '@/components/Tabs'
-import Footer from '@/components/Footer'
+import TabsComponent from '../components/Tabs'
+import Footer from '../components/Footer'
 
 export default function Home() {
   return (
